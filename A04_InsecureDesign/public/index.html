@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A04: Небезпечне проєктування — Інтерактивна лабораторна</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <h1>A04: Небезпечне проєктування</h1>
+    <p class="subtitle">Інтерактивна лабораторна робота з дослідження вразливостей OWASP Top 10</p>
+
+    <div class="grid">
+        <!-- Реєстрація -->
+        <div class="card">
+            <h2>👤 Реєстрація</h2>
+            <input type="text" id="regUsername" placeholder="Ім'я користувача">
+            <input type="email" id="regEmail" placeholder="Email">
+            <input type="password" id="regPassword" placeholder="Пароль">
+            <button onclick="register()">Зареєструватися</button>
+            <div id="regResult"></div>
+            <div class="steps">
+                <strong>Вразливості:</strong>
+                <span class="vulnerability-badge">Немає валідації пароля</span>
+                <span class="vulnerability-badge">Пароль у відкритому вигляді</span>
+            </div>
+        </div>
+
+        <!-- Вхід -->
+        <div class="card">
+            <h2>Вхід</h2>
+            <input type="text" id="loginUsername" placeholder="Ім'я користувача">
+            <input type="password" id="loginPassword" placeholder="Пароль">
+            <button onclick="login()">Увійти</button>
+            <div id="loginResult"></div>
+            <div class="steps">
+                <strong>SQL Injection:</strong>
+                <p>Спробуйте: <code>admin' OR '1'='1</code></p>
+                <span class="vulnerability-badge">SQL Injection</span>
+                <span class="vulnerability-badge">Слабкий Session ID</span>
+            </div>
+        </div>
+
+        <!-- Забули пароль -->
+        <div class="card">
+            <h2>Скидання пароля</h2>
+            <input type="email" id="forgotEmail" placeholder="Email користувача">
+            <button onclick="forgotPassword()">Надіслати токен</button>
+            <div id="forgotResult"></div>
+            <div class="steps">
+                <strong>Вразливості:</strong>
+                <span class="vulnerability-badge">Предикабельний токен</span>
+                <span class="vulnerability-badge">Немає терміну дії</span>
+                <span class="vulnerability-badge">Багаторазове використання</span>
+            </div>
+        </div>
+
+        <!-- Брутфорс токена -->
+        <div class="card">
+            <h2>Підбір токена</h2>
+            <input type="email" id="bruteEmail" placeholder="Email (bob@example.com)">
+            <input type="text" id="bruteUsername" placeholder="Username (bob)">
+            <button onclick="bruteforceToken()">Згенерувати токен</button>
+            <div id="bruteResult"></div>
+            <div class="steps">
+                <strong>Атака:</strong>
+                <ol>
+                    <li>Введіть дані користувача</li>
+                    <li>Клацніть "Згенерувати токен"</li>
+                    <li>Використайте токен для скидання пароля</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- IDOR -->
+        <div class="card">
+            <h2>IDOR Attack</h2>
+            <input type="number" id="profileId" placeholder="User ID (1, 2, 3...)" value="1">
+            <button onclick="getProfile()">Переглянути профіль</button>
+            <div id="profileResult"></div>
+            <div class="steps">
+                <strong>Вразливість:</strong>
+                <span class="vulnerability-badge">IDOR</span>
+                <p>Змініть ID, щоб побачити чужі дані</p>
+            </div>
+        </div>
+
+        <!-- Перегляд користувачів -->
+        <div class="card">
+            <h2>База користувачів</h2>
+            <button onclick="getUsers()">Завантажити користувачів</button>
+            <button onclick="getTokens()">Завантажити токени</button>
+            <div id="usersResult"></div>
+            <div class="steps">
+                <span class="vulnerability-badge">Відкритий API</span>
+                <span class="vulnerability-badge">Витік даних</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Інструкції -->
+    <div class="card">
+        <h2>Завдання для виконання</h2>
+        <div class="steps">
+            <h3>Завдання 1: Підбір токена</h3>
+            <ol>
+                <li>Використайте email <code>bob@example.com</code> та username <code>bob</code></li>
+                <li>Згенерувати токен через "Підбір токена"</li>
+                <li>Скопіюйте токен та перейдіть: <code>http://localhost:3004/reset?token=ВАШ_ТОКЕН</code></li>
+                <li>Змініть пароль адміністратора</li>
+            </ol>
+
+            <h3>Завдання 2: SQL Injection</h3>
+            <ol>
+                <li>У полі "Ім'я користувача" введіть: <code>admin' OR '1'='1</code></li>
+                <li>Пароль можна ввести будь-який</li>
+                <li>Клацніть "Увійти" та проаналізуйте результат</li>
+            </ol>
+
+            <h3>Завдання 3: IDOR</h3>
+            <ol>
+                <li>Змінюйте User ID від 1 до 2</li>
+                <li>Переглядайте дані різних користувачів без авторизації</li>
+            </ol>
+
+            <h3>Завдання 4: Аналіз токенів</h3>
+            <ol>
+                <li>Натисніть "Завантажити токени"</li>
+                <li>Проаналізуйте структуру токенів</li>
+                <li>Спробуйте використати старий токен повторно</li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

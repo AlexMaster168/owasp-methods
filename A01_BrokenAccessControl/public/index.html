@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A01: Broken Access Control — Лабораторна робота</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <h1>A01: Порушення контролю доступу</h1>
+    <p><strong>Ваша роль:</strong> <em>alice (звичайний користувач)</em></p>
+    <p>Ви бачите свій профіль, але можете переглянути профілі інших — навіть адміністратора!</p>
+
+    <form action="/profile/2/update" method="POST">
+        <label for="userId">Введіть ID користувача для перегляду:</label>
+        <input type="number" id="userId" name="userId" value="1" min="1" max="3">
+        <button type="button" onclick="viewProfile()">Переглянути профіль</button>
+    </form>
+
+    <form action="/profile/2/update" method="POST" style="margin-top: 20px;">
+        <label for="updateId">Введіть ID користувача для зміни email:</label>
+        <input type="number" id="updateId" name="updateId" value="2" min="1" max="3">
+        <input type="text" id="newEmail" name="email" placeholder="новий email" required>
+        <button type="submit">Змінити email</button>
+    </form>
+
+    <div id="result" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; background: #f9f9f9;"></div>
+
+    <hr>
+    <h3>Завдання:</h3>
+    <ol>
+        <li>Змініть ID в полі "Переглянути профіль" на 2 — що ви бачите?</li>
+        <li>Чи можете ви змінити email користувача bob (ID=2)?</li>
+        <li>Чому це можливо? Як це виправити?</li>
+    </ol>
+</div>
+
+<script>
+    async function viewProfile() {
+        const id = document.getElementById('userId').value;
+        const response = await fetch(`/profile/${id}`);
+        const data = await response.json();
+        document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+    }
+</script>
+</body>
+</html>

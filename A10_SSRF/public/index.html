@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A10: SSRF - Підробка серверних запитів</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>A10: SSRF Attack Lab</h1>
+        <p>Server-Side Request Forgery - Підробка серверних запитів</p>
+    </div>
+
+    <div class="content">
+        <div class="section">
+            <h2>Що таке SSRF?</h2>
+            <p>SSRF (Server-Side Request Forgery) — це вразливість, яка дозволяє атакувачу змусити сервер виконати HTTP-запити до довільних URL. Це може призвести до:</p>
+            <ul style="margin: 15px 0 15px 30px; line-height: 1.8;">
+                <li>Доступу до внутрішніх API та сервісів</li>
+                <li>Витоку секретних ключів з метаданих хмари</li>
+                <li>Сканування внутрішньої мережі</li>
+                <li>Обходу файрволів та ACL</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Спробуй експлуатувати SSRF</h2>
+            <div class="form-group">
+                <label for="url">Введи URL для запиту:</label>
+                <input type="text" id="url" placeholder="https://example.com" value="https://httpbin.org/ip">
+            </div>
+            <button class="btn" onclick="fetchURL()">📡 Виконати запит</button>
+
+            <div class="loader" id="loader">
+                <div class="spinner"></div>
+                <p style="margin-top: 10px;">Виконується запит...</p>
+            </div>
+
+            <div class="result-box" id="result"></div>
+        </div>
+
+        <div class="section">
+            <h2>Швидкі атаки</h2>
+            <p>Спробуй ці URL для експлуатації SSRF:</p>
+            <div class="quick-attacks">
+                <button class="attack-btn" onclick="quickAttack('http://localhost:3010/internal/api')">
+                    🎯 Internal API
+                </button>
+                <button class="attack-btn" onclick="quickAttack('http://127.0.0.1:3010/internal/users')">
+                    💀 User Database
+                </button>
+                <button class="attack-btn" onclick="quickAttack('http://localhost:3010/metadata/credentials')">
+                    ☁️ Cloud Metadata
+                </button>
+                <button class="attack-btn" onclick="quickAttack('http://127.0.0.1:3010/admin/dashboard')">
+                    🔐 Admin Panel
+                </button>
+            </div>
+        </div>
+
+        <div class="section tasks">
+            <h2>Завдання</h2>
+            <ol>
+                <li>Виконай звичайний запит до <code>https://httpbin.org/ip</code> — все працює нормально</li>
+                <li>Спробуй отримати внутрішній API: <code>http://localhost:3010/internal/api</code></li>
+                <li>Витягни базу користувачів: <code>http://127.0.0.1:3010/internal/users</code></li>
+                <li>Отримай метадані хмари: <code>http://localhost:3010/metadata/credentials</code></li>
+                <li>Зламай адмін-панель: <code>http://127.0.0.1:3010/admin/dashboard</code></li>
+                <li>Знайди всі прапорці (flags) у відповідях!</li>
+            </ol>
+        </div>
+
+        <div class="section" style="background: #fff3cd; padding: 20px; border-radius: 8px;">
+            <h2>Як це виправити?</h2>
+            <ol style="margin-left: 20px; line-height: 1.8;">
+                <li><strong>Whitelist дозволених доменів</strong> — дозволяти тільки безпечні URL</li>
+                <li><strong>Блокувати приватні IP</strong> — заборонити 127.0.0.1, 10.x.x.x, 192.168.x.x тощо</li>
+                <li><strong>Використовувати бібліотеки</strong> — ssrf-agent, validator для перевірки URL</li>
+                <li><strong>Відключити редіректи</strong> — maxRedirects: 0</li>
+                <li><strong>Network segmentation</strong> — ізолювати внутрішні сервіси</li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "name": "owasp-a04-insecure-design",
+  "version": "1.0.0",
+  "description": "Лабораторна робота A04: OWASP Top 10 2021 — Небезпечне проєктування. Умисно вразливий Node.js додаток з порушеною логікою скидання пароля.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": ["owasp", "nodejs", "express", "insecure-design", "password-reset", "lab"],
+  "author": "Alex Master",
+  "license": "AMaster",
+  "dependencies": {
+    "express": "^4.18.2",
+    "body-parser": "^1.20.2",
+    "sqlite3": "^5.1.6",
+    "crypto": "^1.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

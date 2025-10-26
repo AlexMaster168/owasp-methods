@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>A02: JWT None Algorithm Attack</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="container">
+    <h1>A02: Cryptographic Failures</h1>
+    <div class="subtitle">JWT атака з алгоритмом "none" - детальний прогрес</div>
+
+    <div class="warning">
+        Увага! Це навчальна вразлива програма. Ніколи не використовуйте такий код у реальних проєктах!
+    </div>
+
+    <div class="login-box">
+        <h3 style="margin-bottom: 15px;">Крок 1: Авторизація</h3>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="alice або bob" required value="alice" />
+            <input type="password" id="password" placeholder="пароль" required value="password123" />
+            <button type="submit">Увійти</button>
+        </form>
+    </div>
+
+    <div id="progressBox" class="progress-box hidden">
+        <h3 style="margin-bottom: 15px;">Прогрес експлойту:</h3>
+        <div id="step1" class="progress-step">
+            <span class="icon"></span>
+            <span>Крок 1: Отримання валідного JWT токена</span>
+        </div>
+        <div id="step2" class="progress-step">
+            <span class="icon"></span>
+            <span>Крок 2: Аналіз структури токена</span>
+        </div>
+        <div id="step3" class="progress-step">
+            <span class="icon"></span>
+            <span>Крок 3: Модифікація header (alg: none)</span>
+        </div>
+        <div id="step4" class="progress-step">
+            <span class="icon"></span>
+            <span>Крок 4: Модифікація payload (role: admin)</span>
+        </div>
+        <div id="step5" class="progress-step">
+            <span class="icon"></span>
+            <span>Крок 5: Видалення підпису</span>
+        </div>
+        <div id="step6" class="progress-step">
+            <span class="icon"></span>
+            <span>Крок 6: Отримання доступу до адмін-панелі</span>
+        </div>
+    </div>
+
+    <div id="tokenDisplay" class="token-box hidden">
+        <div class="token-header">
+            <strong>JWT Токен:</strong>
+            <button class="copy-btn" id="copyBtn">Копіювати</button>
+        </div>
+        <code id="tokenValue"></code>
+        <div id="tokenParts" class="token-parts hidden"></div>
+    </div>
+
+    <div class="actions hidden" id="actions">
+        <button id="analyzeBtn">Крок 2: Проаналізувати токен</button>
+        <button id="modifyTokenBtn" disabled>Кроки 3-5: Модифікувати токен</button>
+        <button id="viewProfileBtn">Тест: Переглянути профіль</button>
+        <button id="viewAdminBtn" disabled>Крок 6: Отримати доступ адміна</button>
+    </div>
+
+    <div id="result" class="result-box hidden"></div>
+
+    <div class="instructions">
+        <h3>Що відбувається під капотом:</h3>
+        <ol>
+            <li><strong>JWT складається з 3 частин:</strong> Header.Payload.Signature</li>
+            <li><strong>Header</strong> містить алгоритм підпису (HS256, RS256, або none)</li>
+            <li><strong>Вразливість:</strong> Якщо сервер приймає алгоритм "none", підпис не перевіряється</li>
+            <li><strong>Експлойт:</strong> Змінюємо alg на "none", role на "admin", видаляємо підпис</li>
+            <li><strong>Результат:</strong> Сервер довіряє модифікованому токену без перевірки підпису</li>
+        </ol>
+        <p style="margin-top: 15px; color: #856404;">
+            Захист: завжди явно вказуйте дозволені алгоритми і ніколи не дозволяйте "none"!
+        </p>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

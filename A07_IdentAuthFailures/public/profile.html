@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ваш профіль</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <h1>👤 Ваш профіль</h1>
+    <p><strong>Ваша роль:</strong> <span id="userRole">...</span></p>
+    <p><strong>Ім’я:</strong> <span id="username">...</span></p>
+    <p><strong>Email:</strong> <span id="email">...</span></p>
+
+    <form id="updateForm">
+        <label for="email">Змінити email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <!-- ВРАЗЛИВІСТЬ: ПОЛЕ ROLE НЕ ПОВИННО БУТИ ДОСТУПНЕ — АЛЕ ТУТ ЙОГО Є! -->
+        <label for="role">Роль (тільки для адміна):</label>
+        <select id="role" name="role">
+            <option value="user">User</option>
+            <option value="admin">Admin</option> <!-- ← Це зловмисний варіант! -->
+        </select>
+
+        <button type="submit">Оновити профіль</button>
+    </form>
+
+    <a href="/logout">Вийти</a>
+
+    <div id="result" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; background: #f9f9f9;"></div>
+
+    <hr>
+    <h3>Пояснення:</h3>
+    <p>Ви бачите поле "Роль" — це помилка. Ви — звичайний користувач, але сервер приймає зміни ролі.</p>
+</div>
+
+<script>
+    // Завантажуємо дані з сесії
+    fetch('/api/user')
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('userRole').textContent = data.role;
+            document.getElementById('username').textContent = data.username;
+            document.getElementById('email').value = data.email;
+        });
+
+    document.getElementById('updateForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const role = document.getElementById('role').value;
+
+        const response = await fetch('/profile/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({ email, role })
+        });
+
+        const result = await response.json();
+        document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+
+        if (result.success) {
+            document.getElementById('userRole').textContent = role;
+        }
+    });
+</script>
+</body>
+</html>

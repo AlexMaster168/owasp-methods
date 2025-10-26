@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Скидання пароля</title>
+    <link rel="stylesheet" href="reset.css">
+</head>
+<body>
+<div class="container">
+    <h1>Скидання пароля</h1>
+    <p class="subtitle">Введіть новий пароль для вашого облікового запису</p>
+
+    <div class="warning">
+        <strong>Виявлені вразливості:</strong><br>
+        <span class="vulnerability-badge">Токен не перевіряється на термін дії</span>
+        <span class="vulnerability-badge">Токен можна використовувати багато разів</span>
+        <span class="vulnerability-badge">Немає валідації пароля</span>
+    </div>
+
+    <div class="token-info">
+        <strong>Інформація про токен:</strong><br>
+        <code id="displayToken">Завантаження...</code>
+    </div>
+
+    <form id="resetForm">
+        <input type="hidden" name="token" id="tokenInput">
+
+        <div class="form-group">
+            <label for="newPassword">Новий пароль:</label>
+            <input type="password" id="newPassword" name="newPassword"
+                   placeholder="Введіть новий пароль" required>
+        </div>
+
+        <div class="form-group">
+            <label for="confirmPassword">Підтвердження пароля:</label>
+            <input type="password" id="confirmPassword" name="confirmPassword"
+                   placeholder="Повторіть пароль" required>
+        </div>
+
+        <button type="submit">Змінити пароль</button>
+    </form>
+
+    <div id="result" class="result"></div>
+
+    <div class="back-link">
+        <a href="/">← Повернутися на головну</a>
+    </div>
+</div>
+
+<script src="reset.js"></script>
+</body>
+</html>

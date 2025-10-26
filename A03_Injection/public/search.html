@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A03: SQL Injection Lab - OWASP Top 10</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>A03: SQL Injection - OWASP Top 10</h1>
+        <p>Лабораторна робота з ін'єкціями бази даних</p>
+    </div>
+
+    <div class="content">
+        <div class="attack-examples">
+            <h3>Приклади атак (клікніть, щоб підставити):</h3>
+            <div class="attack-list">
+                <div class="attack-item" onclick="setAttack(`' OR '1'='1`)">
+                    <strong>1. Базова ін'єкція:</strong> <code>' OR '1'='1</code>
+                    <div class="hint">Обхід умови WHERE</div>
+                </div>
+                <div class="attack-item" onclick="setAttack(`' OR '1'='1' --`)">
+                    <strong>2. З коментарем:</strong> <code>' OR '1'='1' --</code>
+                    <div class="hint">Видаляє решту запиту</div>
+                </div>
+                <div class="attack-item" onclick="setAttack(`' UNION SELECT id, username, email, role FROM users --`)">
+                    <strong>3. UNION атака:</strong> <code>' UNION SELECT id, username, email, role FROM users --</code>
+                    <div class="hint">Об'єднання з іншим запитом</div>
+                </div>
+                <div class="attack-item" onclick="setAttack(`admin' --`)">
+                    <strong>4. Адмін-обхід:</strong> <code>admin' --</code>
+                    <div class="hint">Пошук конкретного користувача</div>
+                </div>
+                <div class="attack-item" onclick="setAttack(`'; DROP TABLE users; --`)">
+                    <strong>5. Видалення таблиці:</strong> <code>'; DROP TABLE users; --</code>
+                    <div class="hint">Деструктивна атака (не працює у SQLite з одним запитом)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison">
+            <div class="test-panel vulnerable">
+                <h3>
+                    <span class="badge badge-danger">Вразливий</span>
+                    Небезпечний код
+                </h3>
+                <input type="text" id="searchVulnerable" placeholder="Введіть запит..." value="alice">
+                <button onclick="searchVulnerable()">Тестувати вразливий варіант</button>
+                <div id="resultVulnerable" class="result"></div>
+            </div>
+
+            <div class="test-panel secure">
+                <h3>
+                    <span class="badge badge-success">Безпечний</span>
+                    Параметризований запит
+                </h3>
+                <input type="text" id="searchSecure" placeholder="Введіть запит..." value="alice">
+                <button onclick="searchSecure()">Тестувати безпечний варіант</button>
+                <div id="resultSecure" class="result"></div>
+            </div>
+        </div>
+
+        <div class="tasks">
+            <h3>Завдання для виконання:</h3>
+            <ol>
+                <li>Спробуйте ввести <code>alice</code> в обидва поля — порівняйте результати</li>
+                <li>Використайте атаку <code>' OR '1'='1</code> у вразливому варіанті</li>
+                <li>Перевірте ту ж атаку в безпечному варіанті — що відбувається?</li>
+                <li>Спробуйте UNION атаку у вразливому варіанті</li>
+                <li>Подивіться на згенеровані SQL-запити в результатах</li>
+                <li>Проаналізуйте різницю між двома підходами</li>
+            </ol>
+        </div>
+
+        <div class="explanation">
+            <h3>Як захиститися від SQL Injection:</h3>
+            <ol>
+                <li><strong>Параметризовані запити (Prepared Statements):</strong>
+                    <pre>const query = "SELECT * FROM users WHERE username LIKE ?";
+db.all(query, [`%${searchTerm}%`], callback);</pre>
+                </li>
+                <li><strong>ORM (Object-Relational Mapping):</strong> Sequelize, TypeORM, Prisma</li>
+                <li><strong>Валідація вхідних даних:</strong> Перевіряйте формат та тип даних</li>
+                <li><strong>Принцип найменших привілеїв:</strong> Обмежте права БД</li>
+                <li><strong>Escape-символи:</strong> Екранування спеціальних символів</li>
+                <li><strong>Whitelist підхід:</strong> Дозволяйте тільки безпечні символи</li>
+            </ol>
+        </div>
+    </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

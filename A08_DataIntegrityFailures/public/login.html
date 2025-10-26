@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A08: Помилки цілісності — Десеріалізація</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <h1>A08: Помилки цілісності даних та програмного забезпечення</h1>
+    <p><strong>Мета:</strong> Увійти як звичайний користувач, а потім змінити свою роль на <code>admin</code> через десеріалізацію JSON!</p>
+
+    <form action="/login" method="POST">
+        <label for="username">Ім’я користувача:</label>
+        <input type="text" id="username" name="username" placeholder="alice або charlie" required>
+
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" name="password" placeholder="пароль" required>
+
+        <button type="submit">Увійти</button>
+    </form>
+
+    <div id="result" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; background: #f9f9f9;"></div>
+
+    <hr>
+    <h3>Завдання:</h3>
+    <ol>
+        <li>Увійдіть як <code>alice</code> (пароль: <code>alice123</code>) — ви потрапите на /profile.</li>
+        <li>Змініть URL на:
+            <code>http://localhost:3008/profile?profileData=%7B%22__proto__%22%3A%7B%22role%22%3A%22admin%22%7D%7D</code></li>
+        <li>Чи побачили ви, що тепер ви <code>admin</code>?</li>
+        <li>Чому це можливо? Як це виправити?</li>
+    </ol>
+
+    <h4>Підказка:</h4>
+    <p>Це — <em>Prototype Pollution</em>. Ви не змінюєте свій об’єкт — ви змінюєте <em>прототип всіх об’єктів</em> в системі!</p>
+    <p>У реальному житті це дозволяє:
+    <ul>
+        <li>Обійти аутентифікацію</li>
+        <li>Отримати права адміна</li>
+        <li>Зламати логіку додатка</li>
+    </ul>
+    </p>
+</div>
+</body>
+</html>

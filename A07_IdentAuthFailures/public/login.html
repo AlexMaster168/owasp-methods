@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A07: Помилки аутентифікації — Зміна ролі</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <h1>A07: Помилки аутентифікації та ідентифікації</h1>
+    <p><strong>Мета:</strong> Увійти як звичайний користувач, а потім змінити свою роль на <code>admin</code>!</p>
+
+    <form action="/login" method="POST">
+        <label for="username">Ім’я користувача:</label>
+        <input type="text" id="username" name="username" placeholder="alice або charlie" required>
+
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" name="password" placeholder="пароль" required>
+
+        <button type="submit">Увійти</button>
+    </form>
+
+    <div id="result" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; background: #f9f9f9;"></div>
+
+    <hr>
+    <h3>Завдання:</h3>
+    <ol>
+        <li>Увійдіть як <code>alice</code> (пароль: <code>alice123</code>) — ви бачите свій профіль.</li>
+        <li>Відкрийте DevTools → Network → відкрийте запит <code>/profile/update</code>.</li>
+        <li>Змініть поле <code>role</code> з <code>user</code> на <code>admin</code>.</li>
+        <li>Надішліть запит — чи отримали ви повідомлення про успіх?</li>
+        <li>Перезавантажте сторінку <code>/profile</code> — чи тепер ви бачите, що ви <code>admin</code>?</li>
+        <li>Чи можна тепер отримати доступ до адмін-панелі? (Наприклад, <code>/admin</code> — якщо б вона була)</li>
+        <li>Чому це можливо? Як це виправити?</li>
+    </ol>
+
+    <p><strong>Підказка:</strong> Це — <em>IDOR (Insecure Direct Object Reference)</em> на рівні сесії. Ви не змінюєте чужий профіль — ви змінюєте <em>свій</em>, але змінюєте <em>роль</em>, яку не повинні.</p>
+</div>
+</body>
+</html>

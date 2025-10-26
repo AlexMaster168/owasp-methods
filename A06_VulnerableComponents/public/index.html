@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A06: Уразливі та застарілі компоненти</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <h1>A06: Уразливі та застарілі компоненти</h1>
+    <p><strong>Мета:</strong> Виявити вразливі залежності в Node.js-додатку за допомогою інструментів аналізу!</p>
+
+    <p>Цей сайт — фейковий. Але в ньому використовується застаріла версія Express.js, яка має відому вразливість.</p>
+
+    <h3>Завдання:</h3>
+    <ol>
+        <li>Запустіть додаток: <code>npm install && npm start</code></li>
+        <li>Перейдіть на <code>http://localhost:3006</code> — відкриється сторінка.</li>
+        <li>Перейдіть на <code>http://localhost:3006/api/info</code> — чи бачите ви версію Express?</li>
+        <li>В консолі виконайте: <code>npm audit</code> — чи ви бачите вразливість?</li>
+        <li>Знайдіть відповідь на питання: <strong>Яка CVE-ідентифікація вразливості?</strong></li>
+        <li>Як виправити? — Оновіть `express` до версії <code>4.17.1</code> або вище.</li>
+        <li>Після оновлення — знову запустіть <code>npm audit</code> — чи вразливість зникла?</li>
+    </ol>
+
+    <h3>💡 Підказка:</h3>
+    <p>У реальному житті:
+    <ul>
+        <li>80% веб-додатків використовують застарілі бібліотеки.</li>
+        <li>Атакувач може отримати доступ до файлів сервера через Directory Traversal.</li>
+        <li>Ви можете виявити це за допомогою <code>npm audit</code>, <code>snyk</code>, або <code>OWASP Dependency-Check</code>.</li>
+    </ul>
+    </p>
+
+    <hr>
+    <h4> Підказка для виявлення вразливості:</h4>
+    <pre>
+npm audit
+# Вивід повинен містити:
+# High            Directory Traversal
+# Package         express
+# Patched in      >=4.17.1
+# Dependency of   express
+# Path            express@4.16.0
+# More info       https://npmjs.com/advisories/1087
+    </pre>
+</div>
+</body>
+</html>

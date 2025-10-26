@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A05: Неправильна конфігурація — Скидання пароля</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <h1>A05: Неправильна конфігурація безпеки</h1>
+    <p><strong>Мета:</strong> Використати брутфорс, щоб зламати систему скидання пароля — без знання пароля!</p>
+
+    <form action="/forgot" method="POST">
+        <label for="email">Введіть email для скидання пароля:</label>
+        <input type="email" id="email" name="email" placeholder="bob@example.com" required>
+        <button type="submit">Надіслати запит на скидання</button>
+    </form>
+
+    <div id="result" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; background: #f9f9f9;"></div>
+
+    <hr>
+    <h3>Завдання:</h3>
+    <ol>
+        <li>Перейдіть на <code>http://localhost:3005/api/attempts</code> — чи бачите ви спроби?</li>
+        <li>Напишіть скрипт (на Python, JS, або використовуйте Burp Intruder), який надсилає 100 запитів на <code>/forgot</code> з email <code>bob@example.com</code>.</li>
+        <li>Чи змінився статус сервера? Чи були помилки?</li>
+        <li>Чи можна використати це для підбору email? (наприклад, спробувати `admin@*`, `user@*`)</li>
+        <li>Чому це можливо? Як це виправити?</li>
+    </ol>
+
+    <h4>💡 Підказка:</h4>
+    <p>У реальному житті атакувач може:
+    <ul>
+        <li>Перебирати емейли (enumeration)</li>
+        <li>Завантажувати сервер (DoS)</li>
+        <li>Затопити поштовий сервер</li>
+    </ul>
+    Це — неправильна конфігурація — бо логіка додатка не обмежує запити.
+    </p>
+</div>
+
+<script>
+    document.getElementById('resetForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+
+        const response = await fetch('/forgot', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({ email })
+        });
+
+        const data = await response.text();
+        document.getElementById('result').innerHTML = data;
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A09: Помилки журналювання</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <h1>A09: Помилки журналювання та моніторингу</h1>
+
+    <div class="vulnerability-box">
+        <h3>Вразливість:</h3>
+        <p>Цей додаток <strong>НЕ логує</strong> критичні події безпеки:</p>
+        <ul>
+            <li>Невдалі спроби входу</li>
+            <li>Спроби доступу до адмін панелі</li>
+            <li>Несанкціоновані запити до API</li>
+            <li>Підозрілу активність</li>
+        </ul>
+    </div>
+
+    <form id="loginForm">
+        <label for="username">Ім'я користувача:</label>
+        <input type="text" id="username" name="username" placeholder="alice, bob, або charlie" required>
+
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" name="password" placeholder="введіть пароль" required>
+
+        <button type="submit">Увійти</button>
+    </form>
+
+    <div id="result"></div>
+
+    <div class="quick-links">
+        <a href="/logs" target="_blank">Переглянути логи</a>
+        <a href="/attack-demo" target="_blank">Демо атаки</a>
+    </div>
+
+    <div class="task-list">
+        <h3>Завдання для студентів:</h3>
+        <ol>
+            <li><strong>Тест 1:</strong> Увійдіть як <code>alice / alice123</code>. Перевірте логи — чи з'явився запис?</li>
+
+            <li><strong>Тест 2 (Brute-force):</strong> Спробуйте 10 разів увійти як <code>admin</code> з неправильними паролями (<code>123, pass, admin, qwerty</code> тощо). Потім перевірте логи — чи є там хоч один запис про невдалі спроби?</li>
+
+            <li><strong>Тест 3 (Username enumeration):</strong> Спробуйте увійти з іменами <code>test1, test2, admin, root</code> та випадковими паролями. Чи може атакувач дізнатися, які користувачі існують?</li>
+
+            <li><strong>Тест 4 (Привілеї):</strong> Увійдіть як <code>alice</code>, спробуйте відкрити <code>/admin</code>. Перевірте логи — чи зафіксовано спробу несанкціонованого доступу?</li>
+
+            <li><strong>Тест 5 (API):</strong> Увійдіть як звичайний користувач і спробуйте відкрити <code>/api/users</code> у новій вкладці. Чи логується ця спроба?</li>
+        </ol>
+    </div>
+
+    <div class="hint-box">
+        <h4>Чому це небезпечно?</h4>
+        <p><strong>Без логів атакувач може:</strong></p>
+        <ul>
+            <li>Незліченну кількість разів намагатися підібрати пароль (brute-force)</li>
+            <li>Визначити існуючі облікові записи (username enumeration)</li>
+            <li>Намагатися отримати доступ до адмін панелі</li>
+            <li>Красти дані через API без виявлення</li>
+        </ul>
+        <p><strong>І ніхто про це не дізнається!</strong> Це класична помилка журналювання з OWASP Top 10.</p>
+    </div>
+
+    <div class="hint-box">
+        <h4>Як виправити?</h4>
+        <p>Потрібно логувати:</p>
+        <ul>
+            <li>Всі спроби входу (успішні ТА невдалі)</li>
+            <li>IP-адреси та часові мітки</li>
+            <li>Спроби доступу до захищених ресурсів</li>
+            <li>Зміни в правах доступу</li>
+            <li>Підозрілу активність (багато невдалих спроб за короткий час)</li>
+        </ul>
+        <p>Плюс налаштувати алерти та регулярний моніторинг!</p>
+    </div>
+
+    <div style="margin-top: 30px; padding: 15px; background: #f5f5f5; border-radius: 5px;">
+        <h4>Тестові облікові дані:</h4>
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr style="border-bottom: 1px solid #ddd;">
+                <td style="padding: 8px;"><code>alice</code></td>
+                <td style="padding: 8px;"><code>alice123</code></td>
+                <td style="padding: 8px;">Звичайний користувач</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #ddd;">
+                <td style="padding: 8px;"><code>bob</code></td>
+                <td style="padding: 8px;"><code>bobpass</code></td>
+                <td style="padding: 8px;">Адміністратор</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;"><code>charlie</code></td>
+                <td style="padding: 8px;"><code>charlie123</code></td>
+                <td style="padding: 8px;">Звичайний користувач</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

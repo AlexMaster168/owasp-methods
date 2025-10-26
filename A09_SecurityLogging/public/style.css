@@ -1,0 +1,190 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+.container {
+    max-width: 700px;
+    margin: auto;
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+input, button {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    box-sizing: border-box;
+}
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #0056b3;
+}
+pre {
+    background: #f0f0f0;
+    padding: 15px;
+    border-radius: 6px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+}
+ul {
+    padding-left: 20px;
+}
+
+.hint-box {
+    background: #e3f2fd;
+    border-left: 4px solid #2196f3;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 4px;
+}
+.vulnerability-box {
+    background: #ffebee;
+    border-left: 4px solid #f44336;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 4px;
+}
+.task-list {
+    background: #fff3cd;
+    padding: 20px;
+    border-radius: 5px;
+    margin: 20px 0;
+}
+.task-list li {
+    margin: 10px 0;
+}
+#result {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 5px;
+    display: none;
+}
+#result.error {
+    background: #ffebee;
+    border: 1px solid #f44336;
+    color: #c62828;
+}
+#result.success {
+    background: #e8f5e9;
+    border: 1px solid #4caf50;
+    color: #2e7d32;
+}
+.quick-links {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+.quick-links a {
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+.quick-links a:hover {
+    background: #0056b3;
+}
+
+.attack-panel {
+    background: #2c3e50;
+    color: #ecf0f1;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+.attack-controls {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+.attack-controls button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    transition: all 0.3s;
+}
+.start-btn {
+    background: #e74c3c;
+    color: white;
+}
+.start-btn:hover {
+    background: #c0392b;
+}
+.stop-btn {
+    background: #95a5a6;
+    color: white;
+}
+.stop-btn:hover {
+    background: #7f8c8d;
+}
+.logs-btn {
+    background: #3498db;
+    color: white;
+}
+.logs-btn:hover {
+    background: #2980b9;
+}
+#attackLog {
+    background: #34495e;
+    color: #2ecc71;
+    padding: 15px;
+    border-radius: 5px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    max-height: 400px;
+    overflow-y: auto;
+    margin: 20px 0;
+}
+.log-line {
+    margin: 5px 0;
+    padding: 3px;
+}
+.log-error {
+    color: #e74c3c;
+}
+.log-success {
+    color: #2ecc71;
+    font-weight: bold;
+}
+.log-info {
+    color: #3498db;
+}
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+.stat-box {
+    background: #34495e;
+    padding: 15px;
+    border-radius: 5px;
+    text-align: center;
+}
+.stat-value {
+    font-size: 32px;
+    font-weight: bold;
+    color: #e74c3c;
+}
+.stat-label {
+    font-size: 14px;
+    color: #bdc3c7;
+    margin-top: 5px;
+}
+.warning-box {
+    background: #f39c12;
+    color: #2c3e50;
+    padding: 20px;
+    border-radius: 5px;
+    margin: 20px 0;
+}

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Демонстрація Brute-Force атаки</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Демонстрація Brute-Force атаки</h1>
+
+    <div class="warning-box">
+        <h3>НАВЧАЛЬНА ДЕМОНСТРАЦІЯ</h3>
+        <p>Цей інструмент демонструє, як атакувач може перебирати паролі <strong>БЕЗ жодних слідів</strong> через відсутність логування!</p>
+        <p><strong>Важливо:</strong> Використовуйте ТІЛЬКИ для навчання на власному сервері!</p>
+    </div>
+
+    <div class="attack-panel">
+        <h2>Симулятор атаки</h2>
+
+        <div>
+            <label style="display: block; margin-bottom: 5px;">Ціль (username):</label>
+            <input type="text" id="targetUsername" value="admin" style="width: 100%; padding: 8px; margin-bottom: 15px; border-radius: 4px; border: 1px solid #95a5a6;">
+        </div>
+
+        <div>
+            <label style="display: block; margin-bottom: 5px;">Затримка між спробами (мс):</label>
+            <input type="number" id="attackDelay" value="500" min="100" max="5000" step="100" style="width: 100%; padding: 8px; margin-bottom: 15px; border-radius: 4px; border: 1px solid #95a5a6;">
+        </div>
+
+        <div class="attack-controls">
+            <button class="start-btn" onclick="startAttack()">🚀 Почати атаку</button>
+            <button class="stop-btn" onclick="stopAttack()">⛔ Зупинити</button>
+            <button class="logs-btn" onclick="window.open('/logs', '_blank')">📋 Переглянути логи сервера</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-value" id="attemptCount">0</div>
+                <div class="stat-label">Спроб</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="failCount">0</div>
+                <div class="stat-label">Невдач</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="successCount">0</div>
+                <div class="stat-label">Успіхів</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="timeElapsed">0</div>
+                <div class="stat-label">Секунд</div>
+            </div>
+        </div>
+
+        <div id="attackLog"></div>
+    </div>
+
+    <div style="background: #ecf0f1; padding: 20px; border-radius: 5px; margin: 20px 0;">
+        <h3>Що відбувається?</h3>
+        <ol>
+            <li>Скрипт автоматично перебирає найпопулярніші паролі</li>
+            <li>Кожна спроба — це POST запит на <code>/login</code></li>
+            <li>Сервер НЕ логує невдалі спроби (вразливість!)</li>
+            <li>Перевірте <code>/logs</code> — там будуть ТІЛЬКИ успішні входи</li>
+            <li>Атакувач може робити це годинами без виявлення!</li>
+        </ol>
+    </div>
+
+    <div style="background: #e8f5e9; padding: 20px; border-radius: 5px; border-left: 4px solid #4caf50;">
+        <h3>Як захиститися?</h3>
+        <ul>
+            <li><strong>Логування:</strong> Записувати ВСІ спроби входу (успішні та невдалі)</li>
+            <li><strong>Rate Limiting:</strong> Обмежити кількість спроб (напр. 5 спроб за 15 хв)</li>
+            <li><strong>Account Lockout:</strong> Блокувати акаунт після N невдалих спроб</li>
+            <li><strong>CAPTCHA:</strong> Після кількох невдалих спроб</li>
+            <li><strong>Моніторинг:</strong> Алерти про підозрілу активність</li>
+            <li><strong>2FA/MFA:</strong> Двофакторна автентифікація</li>
+            <li><strong>IP Blocking:</strong> Блокувати підозрілі IP-адреси</li>
+        </ul>
+    </div>
+
+    <a href="/login" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background: #3498db; color: white; text-decoration: none; border-radius: 5px;">← Назад до входу</a>
+</div>
+
+<script src="attack.js"></script>
+</body>
+</html>

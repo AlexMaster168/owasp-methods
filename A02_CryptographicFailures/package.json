@@ -1,0 +1,22 @@
+{
+  "name": "owasp-a02-cryptographic-failures",
+  "version": "1.0.0",
+  "description": "Лабораторна робота A02: OWASP Top 10 2021 — Криптографічні помилки. Умисно вразливий Node.js додаток з JWT та слабким підписом.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": ["owasp", "nodejs", "express", "jwt", "crypto", "lab"],
+  "author": "Alex Master",
+  "license": "AMaster",
+  "dependencies": {
+    "express": "^4.18.2",
+    "body-parser": "^1.20.2",
+    "jsonwebtoken": "^9.0.2",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
