@@ -8,7 +8,7 @@
 </head>
 <body>
 <div class="container">
-    <h1>👤 Ваш профіль</h1>
+    <h1>Ваш профіль</h1>
     <p><strong>Ваша роль:</strong> <span id="userRole">...</span></p>
     <p><strong>Ім’я:</strong> <span id="username">...</span></p>
     <p><strong>Email:</strong> <span id="email">...</span></p>
@@ -36,34 +36,6 @@
     <p>Ви бачите поле "Роль" — це помилка. Ви — звичайний користувач, але сервер приймає зміни ролі.</p>
 </div>
 
-<script>
-    // Завантажуємо дані з сесії
-    fetch('/api/user')
-        .then(res => res.json())
-        .then(data => {
-            document.getElementById('userRole').textContent = data.role;
-            document.getElementById('username').textContent = data.username;
-            document.getElementById('email').value = data.email;
-        });
-
-    document.getElementById('updateForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('email').value;
-        const role = document.getElementById('role').value;
-
-        const response = await fetch('/profile/update', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({ email, role })
-        });
-
-        const result = await response.json();
-        document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
-
-        if (result.success) {
-            document.getElementById('userRole').textContent = role;
-        }
-    });
-</script>
+<script src="script.js"></script>
 </body>
 </html>
