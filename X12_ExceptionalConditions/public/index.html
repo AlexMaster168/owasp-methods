@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>X12 · Exceptional Conditions</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>💥 X12: Mishandling of Exceptional Conditions</h1>
+    <p class="subtitle">OWASP A10:2025 — нова категорія · помилки, які роблять систему вразливою</p>
+    <div class="warning">⚠️ Атака №2 завершує процес сервера. Після неї перезапусти сервер: <code>npm start</code>.</div>
+
+    <div class="card">
+        <h2>Стан: <span id="state" class="hint"></span></h2>
+        <button onclick="resetState()">Скинути</button>
+    </div>
+
+    <div class="card vuln">
+        <span class="badge vuln">1 · Fail-open (CWE-636)</span>
+        <h2>Перевірка токена падає → доступ дозволено</h2>
+        <label>Authorization: Bearer …</label>
+        <input id="tok" value="garbage">
+        <button onclick="getToken()">Отримати легітимний токен alice (role=user)</button>
+        <button class="danger" onclick="call('GET', '/api/admin', null, 'o1', true)">/api/admin</button>
+        <button class="ok" onclick="call('GET', '/api/admin-secure', null, 'o1', true)">/api/admin-secure</button>
+        <pre id="o1"></pre>
+    </div>
+
+    <div class="card vuln">
+        <span class="badge vuln">2 · Необроблений виняток (CWE-248)</span>
+        <h2>Async-хендлер + кривий JSON = падіння сервера</h2>
+        <label>filter</label>
+        <input id="filter" value="oops">
+        <button onclick="document.getElementById('filter').value='{&quot;year&quot;:2026}'">Нормальний filter</button>
+        <button class="danger" onclick="call('GET', '/api/report?filter=' + encodeURIComponent(filter.value), null, 'o2')">/api/report</button>
+        <button class="ok" onclick="call('GET', '/api/report-secure?filter=' + encodeURIComponent(filter.value), null, 'o2')">/api/report-secure</button>
+        <pre id="o2"></pre>
+    </div>
+
+    <div class="card vuln">
+        <span class="badge vuln">3 · Витік деталей помилки (CWE-209)</span>
+        <h2>Stack trace, SQL та конфіг БД у відповіді</h2>
+        <label>id користувача</label>
+        <input id="uid" value="1'">
+        <button class="danger" onclick="call('GET', '/api/user/' + encodeURIComponent(uid.value), null, 'o3')">/api/user/:id</button>
+        <button class="ok" onclick="call('GET', '/api/user-secure/' + encodeURIComponent(uid.value), null, 'o3')">/api/user-secure/:id</button>
+        <pre id="o3"></pre>
+    </div>
+
+    <div class="card vuln">
+        <span class="badge vuln">4 · Немає відкату (CWE-460)</span>
+        <h2>Переказ на неіснуючий рахунок — гроші зникають</h2>
+        <label>Кому</label>
+        <input id="to" value="nobody">
+        <button class="danger" onclick="call('POST', '/api/transfer', { from: 'alice', to: to.value, amount: 100 }, 'o4')">/api/transfer</button>
+        <button class="ok" onclick="call('POST', '/api/transfer-secure', { from: 'alice', to: to.value, amount: 100 }, 'o4')">/api/transfer-secure</button>
+        <pre id="o4"></pre>
+    </div>
+
+    <div class="card vuln">
+        <span class="badge vuln">5 · NaN / Infinity (CWE-754)</span>
+        <h2>Товар по 30 грн, гаманець 100 грн</h2>
+        <label>Кількість (qty)</label>
+        <input id="qty" value="abc">
+        <p class="hint">Спробуй <code>abc</code>, <code>1e309</code>, <code>-5</code>, <code>2</code>, <code>10</code></p>
+        <button class="danger" onclick="call('POST', '/api/buy', { qty: qty.value }, 'o5')">/api/buy</button>
+        <button class="ok" onclick="call('POST', '/api/buy-secure', { qty: qty.value }, 'o5')">/api/buy-secure</button>
+        <pre id="o5"></pre>
+    </div>
+</div>
+<script>
+    async function call(method, url, body, outId, auth) {
+        const headers = { 'Content-Type': 'application/json' };
+        if (auth) headers.Authorization = 'Bearer ' + document.getElementById('tok').value;
+        const out = document.getElementById(outId);
+        try {
+            const r = await fetch(url, { method, headers, body: body ? JSON.stringify(body) : undefined });
+            const text = await r.text();
+            let pretty = text;
+            try { pretty = JSON.stringify(JSON.parse(text), null, 2); } catch {}
+            out.textContent = `HTTP ${r.status}\n${pretty}`;
+        } catch (e) {
+            out.textContent = '💀 Сервер не відповідає: ' + e.message + '\nПроцес Node.js впав через необроблений виняток. Перезапусти сервер.';
+        }
+        refresh();
+    }
+    async function getToken() {
+        const d = await (await fetch('/api/token')).json();
+        document.getElementById('tok').value = d.user;
+    }
+    async function refresh() {
+        try {
+            const s = await (await fetch('/api/state')).json();
+            document.getElementById('state').textContent = `рахунки: ${JSON.stringify(s.accounts)} · гаманець: ${s.wallet.balance}`;
+        } catch { document.getElementById('state').textContent = '💀 сервер недоступний'; }
+    }
+    async function resetState() { await fetch('/api/reset', { method: 'POST' }); refresh(); }
+    refresh();
+</script>
+</body>
+</html>

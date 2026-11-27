@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>X01 · DOM XSS</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>👋 DOM-based XSS</h1>
+    <div class="card">
+        <h2 id="greeting"></h2>
+        <p class="hint">Ім’я береться з <code>location.hash</code>. Змінюй фрагмент URL після <code>#</code>.</p>
+    </div>
+    <p><a href="/">← Назад</a></p>
+</div>
+<script>
+    const name = decodeURIComponent(location.hash.slice(1)) || 'гість';
+    const el = document.getElementById('greeting');
+
+    if (new URLSearchParams(location.search).get('safe') === '1') {
+        // БЕЗПЕЧНО: textContent — HTML не інтерпретується
+        el.textContent = 'Привіт, ' + name + '! (безпечний режим)';
+    } else {
+        // ВРАЗЛИВО: неперевірене джерело (location.hash) → небезпечний sink (innerHTML)
+        el.innerHTML = 'Привіт, ' + name + '!';
+    }
+</script>
+</body>
+</html>

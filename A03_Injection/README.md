@@ -1,6 +1,12 @@
+[🏠 Головна](../README.md) · [⬅ A02 Cryptographic Failures](../A02_CryptographicFailures/README.md) · [A04 Insecure Design ➡](../A04_InsecureDesign/README.md)
+
+> 🔄 **OWASP Top 10:2025:** ця лабораторна відповідає категорії **A05:2025 — Injection** (у 2021 — A03). [Що змінилось у 2025 →](../README.md#-owasp-top-102025--що-змінилось)
+
 # 🔒 A03: SQL Injection - OWASP Top 10 Lab
 
 Лабораторна робота для вивчення вразливості SQL Injection з порівнянням вразливого та безпечного коду.
+
+![Інтерфейс лабораторної A03](screenshots/overview.png)
 
 ## 📋 Зміст
 
@@ -190,3 +196,7 @@ const escaped = mysql.escape(userInput);
 ## 📚 Додаткові матеріали
 
 - [OWASP SQL Injection](https://owasp.org/www-community/attacks/SQL_Injection)
+
+---
+
+[🏠 Головна](../README.md) · [⬅ A02 Cryptographic Failures](../A02_CryptographicFailures/README.md) · [A04 Insecure Design ➡](../A04_InsecureDesign/README.md)

@@ -1,0 +1,5 @@
+{
+  "db": { "host": "10.0.0.5", "user": "root", "password": "Pr0d_DB_P@ss" },
+  "smtp": { "user": "noreply@corp.local", "password": "smtp-secret-2024" },
+  "jwtSecret": "change-me-later"
+}

@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>X01 · XSS Lab</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>🧨 X01: Cross-Site Scripting</h1>
+    <p class="subtitle">OWASP A05:2025 / A03:2021 — Injection · Reflected, Stored та DOM-based XSS</p>
+    <div class="warning">⚠️ Умисно вразливий додаток. Запускай тільки локально.</div>
+
+    <div class="grid">
+        <div class="card vuln">
+            <span class="badge vuln">Reflected XSS</span>
+            <h2>Пошук</h2>
+            <form action="/search" method="get">
+                <label>Пошуковий запит</label>
+                <input name="q" placeholder="<img src=x onerror=alert(1)>">
+                <button type="submit" class="danger">Шукати (вразливо)</button>
+                <button type="submit" class="ok" formaction="/search-secure">Шукати (безпечно)</button>
+            </form>
+            <p class="hint">Пейлоад: <code>&lt;img src=x onerror=alert(document.cookie)&gt;</code></p>
+        </div>
+
+        <div class="card vuln">
+            <span class="badge vuln">DOM-based XSS</span>
+            <h2>Привітання з URL-фрагмента</h2>
+            <p class="hint">Сторінка читає <code>location.hash</code> і пише в <code>innerHTML</code>. Сервер цього взагалі не бачить.</p>
+            <p><a href="/dom.html#Олексій">/dom.html#Олексій</a> — нормально</p>
+            <p><a href="/dom.html#&lt;img src=x onerror=alert(document.domain)&gt;">/dom.html#&lt;img src=x onerror=…&gt;</a> — атака</p>
+            <p><a href="/dom.html?safe=1#&lt;img src=x onerror=alert(document.domain)&gt;">/dom.html?safe=1#…</a> — безпечна версія</p>
+        </div>
+    </div>
+
+    <div class="card vuln">
+        <span class="badge vuln">Stored XSS</span>
+        <h2>Гостьова книга</h2>
+        <label>Автор</label>
+        <input id="author" value="hacker">
+        <label>Коментар</label>
+        <textarea id="text">&lt;img src=x onerror="fetch('/steal?c='+encodeURIComponent(document.cookie))"&gt;</textarea>
+        <button class="danger" onclick="addComment()">Додати коментар</button>
+        <button onclick="resetComments()">Скинути</button>
+
+        <div class="grid" style="margin-top:16px">
+            <div>
+                <span class="badge vuln">innerHTML (вразливо)</span>
+                <div id="list-vuln"></div>
+            </div>
+            <div>
+                <span class="badge secure">textContent (безпечно)</span>
+                <div id="list-secure"></div>
+            </div>
+        </div>
+        <p class="hint">Серверний рендер: <a href="/guestbook">/guestbook</a> (вразливо) · <a href="/guestbook-secure">/guestbook-secure</a> (екранування + CSP)</p>
+    </div>
+
+    <div class="card">
+        <h2>🕵️ Панель атакувальника — вкрадені cookie</h2>
+        <p class="hint">Cookie <code>session</code> виставлена без <code>HttpOnly</code>, тому <code>document.cookie</code> її бачить.</p>
+        <button onclick="loadStolen()">Оновити</button>
+        <pre id="stolen"></pre>
+    </div>
+</div>
+
+<script>
+    async function loadComments() {
+        const comments = await (await fetch('/api/comments')).json();
+        const vuln = document.getElementById('list-vuln');
+        const secure = document.getElementById('list-secure');
+
+        // ВРАЗЛИВО: дані з сервера вставляються як HTML
+        vuln.innerHTML = comments.map(c => `<div class="card"><b>${c.author}</b>: ${c.text}</div>`).join('');
+
+        // БЕЗПЕЧНО: textContent не інтерпретує HTML
+        secure.replaceChildren(...comments.map(c => {
+            const div = document.createElement('div');
+            div.className = 'card';
+            const b = document.createElement('b');
+            b.textContent = c.author;
+            div.append(b, ': ' + c.text);
+            return div;
+        }));
+    }
+
+    async function addComment() {
+        await fetch('/api/comments', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                author: document.getElementById('author').value,
+                text: document.getElementById('text').value
+            })
+        });
+        loadComments();
+    }
+
+    async function resetComments() {
+        await fetch('/api/comments/reset', { method: 'POST' });
+        loadComments();
+    }
+
+    async function loadStolen() {
+        const data = await (await fetch('/api/stolen')).json();
+        document.getElementById('stolen').textContent = JSON.stringify(data, null, 2);
+    }
+
+    loadComments();
+    loadStolen();
+</script>
+</body>
+</html>

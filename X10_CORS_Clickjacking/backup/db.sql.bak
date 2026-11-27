@@ -1,0 +1,4 @@
+-- MySQL dump 10.13  (резервна копія, забута на продакшені)
+CREATE TABLE users (id INT, username VARCHAR(50), password_hash VARCHAR(64));
+INSERT INTO users VALUES (1,'admin','21232f297a57a5a743894a0e4a801fc3'); -- md5('admin')
+INSERT INTO users VALUES (2,'alice','6384e2b2184bcbf58eccf10ca7a6563c');

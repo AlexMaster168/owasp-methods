@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>X10 · Admin Panel</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>⚙️ X10: CORS · Clickjacking · Info Leak</h1>
+    <p class="subtitle">OWASP A02:2025 / A05:2021 — Security Misconfiguration · «Адмін-панель»</p>
+
+    <div class="card" id="login-box">
+        <h2>Вхід</h2>
+        <label>Логін</label><input id="u" value="admin">
+        <label>Пароль</label><input id="p" type="password" value="admin">
+        <p class="hint">У вразливому режимі працює дефолтний <code>admin / admin</code>. У <code>--secure</code> пароль друкується в консолі сервера.</p>
+        <button onclick="login()">Увійти</button>
+        <pre id="login-out"></pre>
+    </div>
+
+    <div id="app" hidden>
+        <div class="card">
+            <h2>Акаунт</h2>
+            <pre id="acc"></pre>
+        </div>
+        <div class="card vuln">
+            <span class="badge vuln">Небезпечна дія</span>
+            <h2>Налаштування</h2>
+            <p>Ця кнопка — ціль clickjacking-атаки.</p>
+            <button class="danger" id="delete" onclick="del()" style="font-size:1.1rem;padding:12px 22px">🗑 Видалити акаунт</button>
+            <button onclick="restore()">Відновити</button>
+        </div>
+        <div class="card">
+            <h2>Атаки</h2>
+            <ol>
+                <li>Відкрий <a href="http://127.0.0.1:4020" target="_blank">сайт атакувальника (127.0.0.1:4020)</a> — CORS-крадіжка API-ключа + clickjacking.</li>
+                <li><a href="/debug" target="_blank">/debug</a> — витік змінних оточення.</li>
+                <li><a href="/backup/" target="_blank">/backup/</a> — лістинг директорії з дампом БД.</li>
+                <li>DevTools → Network → заголовки відповіді: <code>X-Powered-By</code>, <code>Server</code>, відсутні <code>X-Frame-Options</code> / CSP.</li>
+            </ol>
+        </div>
+    </div>
+</div>
+<script>
+    async function me() {
+        const r = await fetch('/api/account');
+        const ok = r.ok;
+        document.getElementById('login-box').hidden = ok;
+        document.getElementById('app').hidden = !ok;
+        if (ok) document.getElementById('acc').textContent = JSON.stringify(await r.json(), null, 2);
+    }
+    async function login() {
+        const r = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: u.value, password: p.value }) });
+        document.getElementById('login-out').textContent = JSON.stringify(await r.json());
+        me();
+    }
+    async function del() { await fetch('/api/delete-account', { method: 'POST' }); me(); }
+    async function restore() { await fetch('/api/restore', { method: 'POST' }); me(); }
+    me();
+</script>
+</body>
+</html>

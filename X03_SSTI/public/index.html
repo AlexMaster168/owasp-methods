@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>X03 · SSTI Lab</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>🧬 X03: Server-Side Template Injection</h1>
+    <p class="subtitle">OWASP A05:2025 / A03:2021 — Injection · «Конструктор email-розсилок»</p>
+    <div class="warning">⚠️ Вразлива версія виконує довільний JavaScript на сервері (RCE). Тільки localhost!</div>
+
+    <div class="grid">
+        <div class="card vuln">
+            <span class="badge vuln">Вразливо · ${…}</span>
+            <h2>Шаблон листа</h2>
+            <textarea id="tpl-vuln">Привіт, ${name}! Ваше замовлення ${order} на суму ${total} грн прийнято.</textarea>
+            <p class="hint">Спробуй:
+                <code class="ex" data-t="${7*7}">${7*7}</code>
+                <code class="ex" data-t="${process.env.APP_SECRET}">${process.env.APP_SECRET}</code>
+                <code class="ex" data-t="${process.mainModule.require('child_process').execSync('whoami')}">${…execSync('whoami')}</code>
+            </p>
+            <button class="danger" onclick="preview('/preview', 'tpl-vuln', 'out-vuln')">Попередній перегляд</button>
+            <pre id="out-vuln"></pre>
+        </div>
+
+        <div class="card secure">
+            <span class="badge secure">Безпечно · {{…}}</span>
+            <h2>Шаблон листа</h2>
+            <textarea id="tpl-secure">Привіт, {{name}}! Ваше замовлення {{order}} на суму {{total}} грн прийнято. ${7*7} {{constructor}}</textarea>
+            <p class="hint">Тільки плейсхолдери з allowlist (<code>name</code>, <code>order</code>, <code>total</code>). Код не виконується.</p>
+            <button class="ok" onclick="preview('/preview-secure', 'tpl-secure', 'out-secure')">Попередній перегляд</button>
+            <pre id="out-secure"></pre>
+        </div>
+    </div>
+</div>
+<script>
+    async function preview(url, inputId, outId) {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ template: document.getElementById(inputId).value })
+        });
+        const data = await res.json();
+        document.getElementById(outId).textContent = data.output ?? ('Помилка: ' + data.error);
+    }
+    document.querySelectorAll('.ex').forEach(el => {
+        el.style.cursor = 'pointer';
+        el.onclick = () => document.getElementById('tpl-vuln').value = el.dataset.t;
+    });
+</script>
+</body>
+</html>

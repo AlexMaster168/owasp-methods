@@ -1,0 +1,19 @@
+{
+  "name": "owasp-x04-path-traversal",
+  "version": "1.0.0",
+  "description": "Додаткова лабораторна X04: Path Traversal / Local File Inclusion. OWASP A01:2025 Broken Access Control.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": ["owasp", "path-traversal", "lfi", "lab"],
+  "author": "Alex Master",
+  "license": "AMaster",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

