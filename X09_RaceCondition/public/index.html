@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>X09 · Race Condition</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>🏎️ X09: Race Condition (TOCTOU)</h1>
+    <p class="subtitle">OWASP A06:2025 / A04:2021 — Insecure Design · «Гаманець з одноразовим купоном»</p>
+
+    <div class="card">
+        <h2>Баланс: <span id="bal">…</span> грн · Купон BONUS50: <span id="coupon">…</span></h2>
+        <label>Кількість паралельних запитів</label>
+        <input id="n" type="number" value="20" min="1" max="200">
+        <button onclick="resetState()">Скинути стан</button>
+    </div>
+
+    <div class="grid">
+        <div class="card vuln">
+            <span class="badge vuln">Вразливо</span>
+            <h2>Купон +50 (одноразовий)</h2>
+            <button onclick="once('/redeem', { code: 'BONUS50' })">1 запит</button>
+            <button class="danger" onclick="burst('/redeem', { code: 'BONUS50' })">N паралельних</button>
+            <h2 style="margin-top:16px">Зняти 100</h2>
+            <button onclick="once('/withdraw', { amount: 100 })">1 запит</button>
+            <button class="danger" onclick="burst('/withdraw', { amount: 100 })">N паралельних</button>
+        </div>
+        <div class="card secure">
+            <span class="badge secure">Безпечно (м’ютекс)</span>
+            <h2>Купон +50 (одноразовий)</h2>
+            <button onclick="once('/redeem-secure', { code: 'BONUS50' })">1 запит</button>
+            <button class="ok" onclick="burst('/redeem-secure', { code: 'BONUS50' })">N паралельних</button>
+            <h2 style="margin-top:16px">Зняти 100</h2>
+            <button onclick="once('/withdraw-secure', { amount: 100 })">1 запит</button>
+            <button class="ok" onclick="burst('/withdraw-secure', { amount: 100 })">N паралельних</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Результат</h2>
+        <pre id="out"></pre>
+        <h2>Журнал сервера</h2>
+        <pre id="log"></pre>
+    </div>
+</div>
+<script>
+    const post = (url, body) => fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then(r => r.json());
+
+    async function refresh() {
+        const s = await (await fetch('/api/state')).json();
+        document.getElementById('bal').textContent = s.balance;
+        document.getElementById('coupon').textContent = s.coupons.BONUS50.used ? 'використаний' : 'активний';
+        document.getElementById('log').textContent = s.log.join('\n') || '—';
+    }
+    async function once(url, body) {
+        document.getElementById('out').textContent = JSON.stringify(await post(url, body), null, 2);
+        refresh();
+    }
+    async function burst(url, body) {
+        const n = Number(document.getElementById('n').value) || 20;
+        document.getElementById('out').textContent = `⏳ ${n} паралельних запитів на ${url}…`;
+        const results = await Promise.all(Array.from({ length: n }, () => post(url, body)));
+        const ok = results.filter(r => r.success).length;
+        document.getElementById('out').textContent =
+            `Успішних: ${ok} з ${n}\n` + (ok > 1 ? '🔴 Операцію виконано кілька разів — race condition!' : '🟢 Виконано не більше одного разу');
+        refresh();
+    }
+    async function resetState() { await post('/api/reset', {}); document.getElementById('out').textContent = ''; refresh(); }
+    refresh();
+</script>
+</body>
+</html>

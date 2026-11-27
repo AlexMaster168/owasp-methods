@@ -1,3 +1,7 @@
+[🏠 Головна](../README.md) · [⬅ A08 Data Integrity Failures](../A08_DataIntegrityFailures/README.md) · [A10 SSRF ➡](../A10_SSRF/README.md)
+
+> 🔄 **OWASP Top 10:2025:** ця лабораторна відповідає категорії **A09:2025 — Security Logging and Alerting Failures** (у 2021 — Security Logging and Monitoring Failures). [Що змінилось у 2025 →](../README.md#-owasp-top-102025--що-змінилось)
+
 # 🔒 OWASP A09: Security Logging and Monitoring Failures
 
 > **Лабораторна робота з кібербезпеки**  
@@ -431,3 +435,6 @@ app.get('/logs', requireAdmin, (req, res) => {
 
 ---
 
+---
+
+[🏠 Головна](../README.md) · [⬅ A08 Data Integrity Failures](../A08_DataIntegrityFailures/README.md) · [A10 SSRF ➡](../A10_SSRF/README.md)

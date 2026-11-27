@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>X06 · Open Redirect</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>↪️ X06: Open Redirect</h1>
+    <p class="subtitle">OWASP A01:2025 — Broken Access Control · «Трекер посилань та логін з ?next=»</p>
+
+    <div class="card">
+        <label>Цільова адреса (параметр <code>url</code>)</label>
+        <input id="url" value="http://127.0.0.1:4016">
+        <p class="hint">Обходи фільтрів:
+            <code class="ex">//127.0.0.1:4016</code>
+            <code class="ex">/\127.0.0.1:4016</code>
+            <code class="ex">http://127.0.0.1:4016/?127.0.0.1:3016</code>
+            <code class="ex">http://127.0.0.1:3016@127.0.0.1:4016</code>
+            <code class="ex">/dashboard</code>
+        </p>
+        <button class="danger" onclick="go('/go')">/go (без перевірки)</button>
+        <button class="danger" onclick="go('/go-startswith')">/go-startswith</button>
+        <button class="danger" onclick="go('/go-includes')">/go-includes</button>
+        <button class="ok" onclick="go('/go-secure')">/go-secure</button>
+        <p class="hint" id="link"></p>
+    </div>
+
+    <div class="grid">
+        <div class="card vuln">
+            <span class="badge vuln">Вразливо</span>
+            <h2>Логін з next</h2>
+            <form method="post" action="/login">
+                <label>Логін</label><input name="u" value="alice">
+                <label>next</label><input name="next" value="http://127.0.0.1:4016">
+                <button class="danger">Увійти</button>
+            </form>
+        </div>
+        <div class="card secure">
+            <span class="badge secure">Безпечно</span>
+            <h2>Логін з next</h2>
+            <form method="post" action="/login-secure">
+                <label>Логін</label><input name="u" value="alice">
+                <label>next</label><input name="next" value="http://127.0.0.1:4016">
+                <button class="ok">Увійти</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    function go(endpoint) {
+        const href = endpoint + '?url=' + encodeURIComponent(document.getElementById('url').value);
+        document.getElementById('link').textContent = 'Посилання для жертви: http://127.0.0.1:3016' + href;
+        location.href = href;
+    }
+    document.querySelectorAll('.ex').forEach(el => {
+        el.style.cursor = 'pointer';
+        el.onclick = () => document.getElementById('url').value = el.textContent;
+    });
+</script>
+</body>
+</html>

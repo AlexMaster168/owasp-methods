@@ -1,6 +1,12 @@
+[🏠 Головна](../README.md) · [⬅ A06 Vulnerable Components](../A06_VulnerableComponents/README.md) · [A08 Data Integrity Failures ➡](../A08_DataIntegrityFailures/README.md)
+
+> 🔄 **OWASP Top 10:2025:** ця лабораторна відповідає категорії **A07:2025 — Authentication Failures** (у 2021 — Identification and Authentication Failures). [Що змінилось у 2025 →](../README.md#-owasp-top-102025--що-змінилось)
+
 # 🔐 OWASP A07: Identification and Authentication Failures
 
 > **Лабораторна робота** з демонстрацією вразливості аутентифікації та ідентифікації (OWASP Top 10 2021)
+
+![Інтерфейс лабораторної A07](screenshots/overview.png)
 
 ## 📋 Опис
 
@@ -153,3 +159,7 @@ owasp-a07-ident-auth-failures/
     ├── profile.html      # Вразливий профіль користувача
     └── style.css         # Стилі інтерфейсу
 ```
+
+---
+
+[🏠 Головна](../README.md) · [⬅ A06 Vulnerable Components](../A06_VulnerableComponents/README.md) · [A08 Data Integrity Failures ➡](../A08_DataIntegrityFailures/README.md)

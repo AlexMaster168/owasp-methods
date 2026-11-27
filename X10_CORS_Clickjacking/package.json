@@ -1,0 +1,20 @@
+{
+  "name": "owasp-x10-cors-clickjacking",
+  "version": "1.0.0",
+  "description": "Додаткова лабораторна X10: CORS misconfiguration, Clickjacking, витік інформації. OWASP A02:2025 (A05:2021) Security Misconfiguration.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "start:secure": "node server.js --secure",
+    "dev": "nodemon server.js"
+  },
+  "keywords": ["owasp", "cors", "clickjacking", "misconfiguration", "lab"],
+  "author": "Alex Master",
+  "license": "AMaster",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

@@ -1,4 +1,10 @@
+[🏠 Головна](../README.md) · [A02 Cryptographic Failures ➡](../A02_CryptographicFailures/README.md)
+
+> 🔄 **OWASP Top 10:2025:** ця лабораторна відповідає категорії **A01:2025 — Broken Access Control** (без змін). [Що змінилось у 2025 →](../README.md#-owasp-top-102025--що-змінилось)
+
 # 🔐 A01: Broken Access Control — Node.js Лабораторна робота
+
+![Інтерфейс лабораторної A01](screenshots/overview.png)
 
 ## 🎯 Мета
 Навчитися виявляти, експлуатувати та виправляти **порушення контролю доступу (IDOR)** у веб-додатках на Node.js.
@@ -69,3 +75,8 @@ app.post('/profile/:id/update', authenticateUser, (req, res) => {
   }
   // ... інша логіка
 });
+```
+
+---
+
+[🏠 Головна](../README.md) · [A02 Cryptographic Failures ➡](../A02_CryptographicFailures/README.md)

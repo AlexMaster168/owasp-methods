@@ -1,3 +1,7 @@
+[🏠 Головна](../README.md) · [⬅ A09 Logging Failures](../A09_SecurityLogging/README.md) · [X01 XSS ➡](../X01_XSS/README.md)
+
+> 🔄 **OWASP Top 10:2025:** ця лабораторна відповідає категорії **A01:2025 — Broken Access Control** (у 2021 — окрема категорія A10 SSRF; у 2025 SSRF увійшов до A01). [Що змінилось у 2025 →](../README.md#-owasp-top-102025--що-змінилось)
+
 # 🔥 OWASP A10: SSRF Attack Lab
 
 ![OWASP](https://img.shields.io/badge/OWASP-Top%2010-red)
@@ -9,6 +13,8 @@
 > ⚠️ **УВАГА**: Цей проєкт **умисно вразливий** і створений тільки для навчальних цілей! Не використовуй цей код у продакшені!
 
 ---
+
+![Інтерфейс лабораторної A10](screenshots/overview.png)
 
 ## 📚 Що таке SSRF?
 
@@ -316,3 +322,8 @@ print(result)
 - Localhost може не працювати на деяких системах (використовуй 127.0.0.1)
 - Windows може блокувати порт 3010 (зміни PORT у server.js)
 - Деякі антивіруси можуть блокувати "шкідливі" запити
+```
+
+---
+
+[🏠 Головна](../README.md) · [⬅ A09 Logging Failures](../A09_SecurityLogging/README.md) · [X01 XSS ➡](../X01_XSS/README.md)

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>X11 · Supply Chain</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>🔗 X11: Software Supply Chain Failures</h1>
+    <p class="subtitle">OWASP A03:2025 — нова категорія (розширення A06:2021 Vulnerable and Outdated Components)</p>
+
+    <div class="grid">
+        <div class="card vuln">
+            <span class="badge vuln">Вектор 1 · Тайпсквотинг</span>
+            <h2>Пакет <code>lodahs</code></h2>
+            <p>У <code>package.json</code> підключено <code>"lodahs"</code> замість <code>"lodash"</code>. Пакет:</p>
+            <ul>
+                <li>під час <code>npm install</code> запускає <code>postinstall</code>-скрипт;</li>
+                <li>при <code>require()</code> відправляє змінні <code>APP_*</code> атакувальнику.</li>
+            </ul>
+            <h2>Маркер postinstall</h2>
+            <pre id="marker"></pre>
+        </div>
+
+        <div class="card vuln">
+            <span class="badge vuln">Вектор 2 · Скомпрометований CDN</span>
+            <h2>Віджет оплати</h2>
+            <p>Стан CDN: <b id="cdn">…</b></p>
+            <button class="danger" onclick="toggle(true)">😈 Скомпрометувати CDN</button>
+            <button class="ok" onclick="toggle(false)">Відновити</button>
+            <p>Далі відкрий і надішли форму:</p>
+            <p><a href="/checkout.html" target="_blank">/checkout.html</a> — без SRI 🔴<br>
+               <a href="/secure.html" target="_blank">/secure.html</a> — з SRI 🟢</p>
+            <p class="hint">SRI: <code id="sri"></code></p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>🕵️ Що отримав атакувальник (127.0.0.1:4021/collect)</h2>
+        <button onclick="refresh()">Оновити</button>
+        <button onclick="resetLab()">Скинути</button>
+        <pre id="loot"></pre>
+    </div>
+</div>
+<script>
+    const post = (u, b) => fetch(u, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b || {}) });
+    async function refresh() {
+        const s = await (await fetch('/lab/state')).json();
+        document.getElementById('cdn').textContent = s.compromised ? '🔴 скомпрометовано' : '🟢 оригінал';
+        document.getElementById('sri').textContent = s.sri;
+        document.getElementById('loot').textContent = JSON.stringify(s.loot, null, 2);
+        document.getElementById('marker').textContent = s.postinstallMarker || 'Файл PWNED_BY_POSTINSTALL.txt не знайдено (можливо, встановлено з --ignore-scripts)';
+    }
+    async function toggle(on) { await post('/lab/compromise', { on }); refresh(); }
+    async function resetLab() { await post('/lab/reset'); refresh(); }
+    refresh();
+    setInterval(refresh, 3000);
+</script>
+</body>
+</html>

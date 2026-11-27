@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>X11 · Checkout (без SRI)</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>🛒 Checkout <span class="badge vuln">без SRI</span></h1>
+    <p class="hint">Підключення: <code>&lt;script src="http://127.0.0.1:4021/widget.js"&gt;</code> — браузер виконає будь-що, що віддасть CDN.</p>
+    <div class="card"><b id="widget">⏳ віджет не завантажився</b></div>
+    <div class="card">
+        <h2>Оплата замовлення #A-1024 — 1499 грн</h2>
+        <form onsubmit="event.preventDefault(); document.getElementById('res').textContent = '✅ Оплату прийнято (демо)';">
+            <label>Ім’я на картці</label><input name="cardholder" value="OLEKSII PETRENKO">
+            <label>Номер картки</label><input name="card" value="4532 1234 5678 9012">
+            <label>CVV</label><input name="cvv" value="123">
+            <button>Оплатити</button>
+        </form>
+        <p id="res"></p>
+    </div>
+    <p><a href="/">← До панелі лабораторної</a></p>
+</div>
+<!-- ВРАЗЛИВО: сторонній скрипт без integrity -->
+<script src="http://127.0.0.1:4021/widget.js"></script>
+</body>
+</html>

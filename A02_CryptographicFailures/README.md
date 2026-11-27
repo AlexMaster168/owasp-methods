@@ -1,4 +1,10 @@
+[🏠 Головна](../README.md) · [⬅ A01 Broken Access Control](../A01_BrokenAccessControl/README.md) · [A03 Injection ➡](../A03_Injection/README.md)
+
+> 🔄 **OWASP Top 10:2025:** ця лабораторна відповідає категорії **A04:2025 — Cryptographic Failures** (у 2021 — A02). [Що змінилось у 2025 →](../README.md#-owasp-top-102025--що-змінилось)
+
 # 🔐 A02: Cryptographic Failures — Node.js Лабораторна робота
+
+![Інтерфейс лабораторної A02](screenshots/overview.png)
 
 ## 🎯 Мета
 Навчитися виявляти, експлуатувати та виправляти **криптографічні помилки** у реалізації JWT-аутентифікації, зокрема **використання слабкого секрету** та **відсутність перевірки алгоритму підпису**.
@@ -70,3 +76,8 @@ app.get('/profile', (req, res) => {
 });
 
 // Аналогічно для /admin
+```
+
+---
+
+[🏠 Головна](../README.md) · [⬅ A01 Broken Access Control](../A01_BrokenAccessControl/README.md) · [A03 Injection ➡](../A03_Injection/README.md)

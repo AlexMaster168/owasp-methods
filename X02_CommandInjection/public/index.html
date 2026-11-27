@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>X02 · Command Injection</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>💻 X02: OS Command Injection</h1>
+    <p class="subtitle">OWASP A05:2025 / A03:2021 — Injection · «Мережева утиліта ping»</p>
+    <div class="warning">⚠️ Цей додаток виконує довільні команди ОС на твоїй машині. Тільки localhost!</div>
+
+    <div class="card">
+        <label>Хост для перевірки</label>
+        <input id="host" value="127.0.0.1">
+        <p class="hint" id="examples">Приклади атак завантажуються…</p>
+        <button class="danger" onclick="run('/ping')">Ping (вразливо: exec)</button>
+        <button class="ok" onclick="run('/ping-secure')">Ping (безпечно: execFile + allowlist)</button>
+    </div>
+
+    <div class="card">
+        <h2>Команда</h2>
+        <pre id="cmd"></pre>
+        <h2>Результат</h2>
+        <pre id="out"></pre>
+    </div>
+</div>
+<script>
+    async function run(url) {
+        document.getElementById('out').textContent = '⏳ Виконується…';
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ host: document.getElementById('host').value })
+        });
+        const data = await res.json();
+        document.getElementById('cmd').textContent = Array.isArray(data.command) ? JSON.stringify(data.command) : (data.command || '—');
+        document.getElementById('out').textContent = data.output || data.error || JSON.stringify(data, null, 2);
+    }
+
+    fetch('/api/info').then(r => r.json()).then(info => {
+        const ex = info.platform === 'win32'
+            ? ['127.0.0.1 & whoami', '127.0.0.1 && dir', '127.0.0.1 | type server.js']
+            : ['127.0.0.1; id', '127.0.0.1 && cat /etc/passwd', '127.0.0.1 | ls -la'];
+        const el = document.getElementById('examples');
+        el.textContent = 'ОС сервера: ' + info.platform + '. Спробуй: ';
+        ex.forEach(e => {
+            const c = document.createElement('code');
+            c.textContent = e;
+            c.style.cursor = 'pointer';
+            c.onclick = () => document.getElementById('host').value = e;
+            el.append(c, ' ');
+        });
+    });
+</script>
+</body>
+</html>

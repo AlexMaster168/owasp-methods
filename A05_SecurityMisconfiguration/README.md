@@ -1,4 +1,10 @@
+[🏠 Головна](../README.md) · [⬅ A04 Insecure Design](../A04_InsecureDesign/README.md) · [A06 Vulnerable Components ➡](../A06_VulnerableComponents/README.md)
+
+> 🔄 **OWASP Top 10:2025:** ця лабораторна відповідає категорії **A02:2025 — Security Misconfiguration** (у 2021 — A05). [Що змінилось у 2025 →](../README.md#-owasp-top-102025--що-змінилось)
+
 # 🔐 A05: Security Misconfiguration — Node.js Лабораторна робота (Версія для МАІКС)
+
+![Інтерфейс лабораторної A05](screenshots/overview.png)
 
 ## 🎯 Мета
 Навчитися виявляти, експлуатувати та виправляти **неправильну конфігурацію безпеки**, коли **додаток не обмежує кількість запитів** на критичні операції — що дозволяє **брутфорс** або **розкриття email-адрес**.
@@ -63,3 +69,8 @@ const forgotLimiter = rateLimit({
 app.post('/forgot', forgotLimiter, (req, res) => {
   // ... інша логіка — без змін
 });
+```
+
+---
+
+[🏠 Головна](../README.md) · [⬅ A04 Insecure Design](../A04_InsecureDesign/README.md) · [A06 Vulnerable Components ➡](../A06_VulnerableComponents/README.md)

@@ -1,4 +1,10 @@
+[🏠 Головна](../README.md) · [⬅ A07 Auth Failures](../A07_IdentAuthFailures/README.md) · [A09 Logging Failures ➡](../A09_SecurityLogging/README.md)
+
+> 🔄 **OWASP Top 10:2025:** ця лабораторна відповідає категорії **A08:2025 — Software or Data Integrity Failures** (без змін). [Що змінилось у 2025 →](../README.md#-owasp-top-102025--що-змінилось)
+
 # A08: Software and Data Integrity Failures - Лабораторна робота
+
+![Інтерфейс лабораторної A08](screenshots/overview.png)
 
 ## Опис проекту
 
@@ -263,3 +269,6 @@ secret: crypto.randomBytes(32).toString('hex')
 - [JavaScript Prototype Pollution](https://blog.detectify.com/2018/09/05/prototype-pollution-attack/)
 - [Lodash Security](https://lodash.com/docs/#merge)
 
+---
+
+[🏠 Головна](../README.md) · [⬅ A07 Auth Failures](../A07_IdentAuthFailures/README.md) · [A09 Logging Failures ➡](../A09_SecurityLogging/README.md)

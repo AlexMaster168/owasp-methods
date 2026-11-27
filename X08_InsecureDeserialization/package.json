@@ -1,0 +1,20 @@
+{
+  "name": "owasp-x08-insecure-deserialization",
+  "version": "1.0.0",
+  "description": "Додаткова лабораторна X08: Insecure Deserialization (node-serialize RCE, CVE-2017-5941). OWASP A08:2025 Software or Data Integrity Failures.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": ["owasp", "deserialization", "rce", "lab"],
+  "author": "Alex Master",
+  "license": "AMaster",
+  "dependencies": {
+    "express": "^4.18.2",
+    "node-serialize": "0.0.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

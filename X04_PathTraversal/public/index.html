@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>X04 · Path Traversal</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>📂 X04: Path Traversal</h1>
+    <p class="subtitle">OWASP A01:2025 — Broken Access Control · «Файловий сервіс документів»</p>
+    <div class="warning">⚠️ Вразливий ендпоінт читає будь-який файл, до якого має доступ процес Node.js.</div>
+
+    <div class="card">
+        <h2>Публічні документи</h2>
+        <div id="files"></div>
+    </div>
+
+    <div class="card">
+        <label>Ім’я файлу (параметр <code>file</code>)</label>
+        <input id="file" value="welcome.txt">
+        <p class="hint">Спробуй:
+            <code class="ex">../secret/db-config.txt</code>
+            <code class="ex">../server.js</code>
+            <code class="ex">../package.json</code>
+            <code class="ex">....//secret/db-config.txt</code>
+        </p>
+        <button class="danger" onclick="load('/download')">Завантажити (вразливо)</button>
+        <button class="danger" onclick="load('/download-filtered')">Наївний фільтр «../»</button>
+        <button class="ok" onclick="load('/download-secure')">Завантажити (безпечно)</button>
+        <p class="hint" id="url"></p>
+        <pre id="out"></pre>
+    </div>
+</div>
+<script>
+    async function load(endpoint) {
+        const url = endpoint + '?file=' + encodeURIComponent(document.getElementById('file').value);
+        document.getElementById('url').textContent = 'GET ' + url;
+        const res = await fetch(url);
+        document.getElementById('out').textContent = `HTTP ${res.status}\n\n` + await res.text();
+    }
+    fetch('/api/files').then(r => r.json()).then(files => {
+        const box = document.getElementById('files');
+        files.forEach(f => {
+            const c = document.createElement('code');
+            c.textContent = f;
+            c.className = 'ex';
+            box.append(c, ' ');
+        });
+        bindExamples();
+    });
+    function bindExamples() {
+        document.querySelectorAll('.ex').forEach(el => {
+            el.style.cursor = 'pointer';
+            el.onclick = () => document.getElementById('file').value = el.textContent;
+        });
+    }
+    bindExamples();
+</script>
+</body>
+</html>

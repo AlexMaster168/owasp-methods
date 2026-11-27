@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>X05 · CSRF Bank</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>🏦 X05: Cross-Site Request Forgery</h1>
+    <p class="subtitle">OWASP A01:2025 — Broken Access Control · «Інтернет-банк»</p>
+
+    <div class="card" id="login-box">
+        <h2>Вхід</h2>
+        <label>Логін</label><input id="u" value="alice">
+        <label>Пароль</label><input id="p" type="password" value="alice123">
+        <button onclick="login()">Увійти</button>
+    </div>
+
+    <div id="app" hidden>
+        <div class="card">
+            <h2>Вітаємо, <span id="who"></span>! Баланс: <span id="bal"></span> грн</h2>
+            <button onclick="logout()">Вийти</button>
+            <button onclick="resetAll()">Скинути баланси</button>
+        </div>
+        <div class="grid">
+            <div class="card vuln">
+                <span class="badge vuln">Вразливо</span>
+                <h2>Переказ без CSRF-токена</h2>
+                <label>Кому</label><input id="to1" value="hacker">
+                <label>Сума</label><input id="am1" value="100">
+                <button class="danger" onclick="transfer('/transfer', 'to1', 'am1', false)">Переказати</button>
+            </div>
+            <div class="card secure">
+                <span class="badge secure">Безпечно</span>
+                <h2>Переказ з CSRF-токеном</h2>
+                <label>Кому</label><input id="to2" value="hacker">
+                <label>Сума</label><input id="am2" value="100">
+                <button class="ok" onclick="transfer('/transfer-secure', 'to2', 'am2', true)">Переказати</button>
+            </div>
+        </div>
+        <div class="card">
+            <h2>Атака</h2>
+            <p>Не виходячи з акаунта, відкрий <a href="http://127.0.0.1:4015" target="_blank">сайт атакувальника (127.0.0.1:4015)</a> і повернись сюди → онови сторінку.</p>
+            <h2>Історія переказів</h2>
+            <pre id="hist"></pre>
+        </div>
+    </div>
+</div>
+<script>
+    let csrf = '';
+    async function me() {
+        const r = await fetch('/api/me');
+        if (!r.ok) { document.getElementById('login-box').hidden = false; document.getElementById('app').hidden = true; return; }
+        const d = await r.json();
+        csrf = d.csrfToken;
+        document.getElementById('login-box').hidden = true;
+        document.getElementById('app').hidden = false;
+        document.getElementById('who').textContent = d.username;
+        document.getElementById('bal').textContent = d.balance;
+        document.getElementById('hist').textContent = d.history.map(h => `${h.time}  ${h.from} → ${h.to}: ${h.amount} грн  [${h.via}]`).join('\n') || '—';
+    }
+    async function login() {
+        await fetch('/login', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: u.value, password: p.value }) });
+        me();
+    }
+    async function logout() { await fetch('/logout', { method: 'POST' }); me(); }
+    async function resetAll() { await fetch('/api/reset', { method: 'POST' }); me(); }
+    async function transfer(url, toId, amId, withToken) {
+        const headers = { 'Content-Type': 'application/json' };
+        if (withToken) headers['X-CSRF-Token'] = csrf;
+        const r = await fetch(url, { method: 'POST', headers,
+            body: JSON.stringify({ to: document.getElementById(toId).value, amount: document.getElementById(amId).value }) });
+        if (!r.ok) alert((await r.json()).error);
+        me();
+    }
+    me();
+</script>
+</body>
+</html>

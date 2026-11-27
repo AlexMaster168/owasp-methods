@@ -1,4 +1,10 @@
+[🏠 Головна](../README.md) · [⬅ A03 Injection](../A03_Injection/README.md) · [A05 Security Misconfiguration ➡](../A05_SecurityMisconfiguration/README.md)
+
+> 🔄 **OWASP Top 10:2025:** ця лабораторна відповідає категорії **A06:2025 — Insecure Design** (у 2021 — A04). [Що змінилось у 2025 →](../README.md#-owasp-top-102025--що-змінилось)
+
 # 🔓 OWASP A04: Insecure Design - Розширена лабораторна робота
+
+![Інтерфейс лабораторної A04](screenshots/overview.png)
 
 ## 📋 Опис
 
@@ -227,3 +233,7 @@ app.get('/api/users', requireAuth, requireAdmin, handler);
 - ❌ НІКОЛИ не використовуйте цей код у production
 - ❌ НІКОЛИ не розгортайте цей додаток на публічних серверах
 - ✅ Використовуйте тільки в ізольованому навчальному середовищі
+
+---
+
+[🏠 Головна](../README.md) · [⬅ A03 Injection](../A03_Injection/README.md) · [A05 Security Misconfiguration ➡](../A05_SecurityMisconfiguration/README.md)

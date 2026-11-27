@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>X07 · File Upload</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>📤 X07: Unrestricted File Upload</h1>
+    <p class="subtitle">OWASP A06:2025 / A04:2021 — Insecure Design · «Завантаження аватарки»</p>
+    <div class="warning">⚠️ Вразливий ендпоінт може перезаписати файли проєкту (через <code>../</code> в імені). Відновлення: <code>git checkout X07_FileUpload/public</code>.</div>
+
+    <div class="card">
+        <h2>1. Обери файл або згенеруй пейлоад</h2>
+        <input type="file" id="file">
+        <p class="hint">Або готові пейлоади:</p>
+        <button onclick="payload('evil.html', 'text/html', '<h1>Pwned</h1><script>alert(\'XSS з завантаженого файлу: \' + document.domain)<\/script>')">evil.html</button>
+        <button onclick="payload('avatar.svg', 'image/svg+xml', '<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; onload=&quot;alert(\'SVG XSS\')&quot;><circle r=&quot;40&quot; cx=&quot;50&quot; cy=&quot;50&quot; fill=&quot;red&quot;/></svg>')">avatar.svg</button>
+        <button onclick="payload('shell.png.html', 'text/html', '<script>alert(\'подвійне розширення\')<\/script>')">shell.png.html</button>
+        <button onclick="payload('fake.png', 'image/png', '<script>alert(1)<\/script>')">fake.png (не PNG всередині)</button>
+        <button class="danger" onclick="payload('../index.html', 'text/html', '<h1 style=&quot;color:red&quot;>DEFACED via ../index.html</h1>')">../index.html (дефейс)</button>
+        <p class="hint">Поточний файл: <code id="current">—</code></p>
+
+        <h2 style="margin-top:16px">2. Завантаж</h2>
+        <label>Ім’я файлу, що піде в заголовок <code>X-File-Name</code></label>
+        <input id="name" value="">
+        <button class="danger" onclick="upload('/upload')">Завантажити (вразливо)</button>
+        <button class="ok" onclick="upload('/upload-secure')">Завантажити (безпечно)</button>
+        <pre id="out"></pre>
+    </div>
+
+    <div class="card">
+        <h2>Завантажені файли</h2>
+        <div id="list"></div>
+    </div>
+</div>
+<script>
+    let blob = null;
+
+    document.getElementById('file').onchange = e => {
+        blob = e.target.files[0];
+        document.getElementById('name').value = blob.name;
+        document.getElementById('current').textContent = blob.name + ' (' + blob.size + ' B)';
+    };
+
+    function payload(name, type, content) {
+        blob = new Blob([content], { type });
+        document.getElementById('name').value = name;
+        document.getElementById('current').textContent = name + ' — ' + content.slice(0, 60) + '…';
+    }
+
+    async function upload(url) {
+        if (!blob) return document.getElementById('out').textContent = 'Спочатку обери файл';
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'X-File-Name': encodeURIComponent(document.getElementById('name').value), 'Content-Type': 'application/octet-stream' },
+            body: blob
+        });
+        const data = await res.json();
+        const out = document.getElementById('out');
+        out.textContent = JSON.stringify(data, null, 2);
+        if (data.url) {
+            const a = document.createElement('a');
+            a.href = data.url; a.target = '_blank'; a.textContent = '\n→ Відкрити ' + data.url;
+            out.append(a);
+        }
+        list();
+    }
+
+    async function list() {
+        const d = await (await fetch('/api/uploads')).json();
+        const box = document.getElementById('list');
+        box.replaceChildren();
+        const mk = (title, items, prefix) => {
+            const p = document.createElement('p');
+            p.append(title + ': ');
+            items.forEach(f => {
+                const a = document.createElement('a');
+                a.href = prefix + f; a.target = '_blank'; a.textContent = f;
+                p.append(a, '  ');
+            });
+            box.append(p);
+        };
+        mk('🔴 /uploads/ (webroot)', d.vulnerable, '/uploads/');
+        mk('🟢 /files/ (поза webroot)', d.secure, '/files/');
+    }
+    list();
+</script>
+</body>
+</html>
